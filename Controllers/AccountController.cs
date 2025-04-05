@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using URLShortener.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +5,7 @@ using AutoMapper;
 using URLShortener.VM;
 using URLShortener.Interfaces;
 
-namespace IdentityUserRegistration.Controllers;
+namespace URLShortener.Controllers;
 
 [Route("[controller]")]
 public class AccountController : Controller

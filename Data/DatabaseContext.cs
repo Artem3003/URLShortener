@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using URLShortener.Models;
+using URLShortener.Seed;
 
 namespace URLShortener.Data;
 
@@ -11,7 +12,7 @@ public class DatabaseContext : IdentityDbContext<User, Role, string>
     {
     }
 
-    public DbSet<Url> Urls { get; set; }
+    public DbSet<ShortenedUrl> ShortenedUrls { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

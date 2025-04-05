@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using URLShortener.Models;
 
-namespace URLShortener.Data;
+namespace URLShortener.Seed;
 
 public class RoleConfiguration : IEntityTypeConfiguration<Role>
 {

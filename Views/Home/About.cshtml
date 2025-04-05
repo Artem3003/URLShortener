@@ -4,4 +4,21 @@
 
 <h1>@ViewData["Title"]</h1>
 
-<p>Here there is a info about algorithm</p>
+@if (ViewBag.IsAdmin)
+{
+    <form method="post" asp-action="About">
+        @Html.AntiForgeryToken()
+        <div class="mb-3">
+            <label for="descriptionTextarea" class="form-label">Algorithm Description</label>
+            <textarea class="form-control" 
+                     id="descriptionTextarea" 
+                     name="description" 
+                     rows="3">@ViewBag.Description</textarea>
+        </div>
+        <button class="btn btn-primary w-100 p-2" type="submit">Save</button>
+    </form>
+}
+else
+{
+    <p>@ViewBag.Description</p>
+}

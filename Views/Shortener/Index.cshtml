@@ -1,0 +1,72 @@
+@model IEnumerable<URLShortener.Models.ShortenedUrl>
+@{
+    ViewData["Title"] = "List of URLs";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>List of URLs</h2>
+        <a asp-action="Shorten" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Create New
+        </a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Short URL</th>
+                    <th>Original URL</th>
+                    <th>Created Date</th>
+                    <th>Created By</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var url in Model)
+                {
+                    <tr>
+                        <td>
+                            <a href="@url.ShortUrl" target="_blank" class="text-decoration-none">
+                                @url.ShortUrl
+                                <i class="bi bi-box-arrow-up-right ms-1"></i>
+                            </a>
+                        </td>
+                        <td class="text-truncate" style="max-width: 300px;" title="@url.OriginalUrl">
+                            @url.OriginalUrl
+                        </td>
+                        <td>@url.CreatedDate.ToString("g")</td>
+                        <td>@url.CreatedBy</td>
+                        <td>
+                            <button class="btn btn-sm btn-danger delete-btn" data-id="@url.Id">
+                                <i class="bi bi-trash"></i> Delete
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('.delete-btn').click(function() {
+                const urlId = $(this).data('id');
+                if (confirm('Are you sure you want to delete this URL?')) {
+                    $.ajax({
+                        url: '/Shortener/Delete/' + urlId,
+                        type: 'DELETE',
+                        success: function() {
+                            location.reload();
+                        },
+                        error: function(xhr) {
+                            alert('Error: ' + xhr.responseText);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}

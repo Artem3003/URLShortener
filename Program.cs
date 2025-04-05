@@ -13,7 +13,11 @@ builder.Services.AddRazorPages();
 builder.Services.AddDbContext<DatabaseContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddSingleton<AlgorithmDescriptionService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IUrlShorteningService, UrlShorteningService>();
+
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddIdentity<User, Role>(options =>
 {
@@ -42,18 +46,16 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseStaticFiles();
 app.UseRouting();
 
-app.UseAuthorization();
 app.UseAuthentication();
-
-app.MapStaticAssets();
-app.MapRazorPages()
-   .WithStaticAssets();
+app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapRazorPages();
 
 app.Run();

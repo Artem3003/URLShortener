@@ -2,13 +2,15 @@
 
 using System;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 
 namespace URLShortener.Models;
 
-public class Url
+[Index(nameof(ShortUrl), IsUnique = true)]
+public class ShortenedUrl
 {
     [Key]
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 
     [Required]
     public string ShortUrl { get; set; } = string.Empty;

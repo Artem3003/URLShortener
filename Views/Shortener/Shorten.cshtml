@@ -1,0 +1,30 @@
+@model URLShortener.VM.ShortenedUrlRequest
+@{
+    ViewData["Title"] = "Shorten URL";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Shorten Your URL</h3>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Shorten" method="post">
+                        <div class="mb-3">
+                            <label asp-for="Url" class="form-label">Enter your long URL</label>
+                            <input asp-for="Url" class="form-control" placeholder="https://example.com/very-long-url"/>
+                            <span asp-validation-for="Url" class="text-danger"></span>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Shorten URL</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
