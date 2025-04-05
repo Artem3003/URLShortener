@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace URLShortener.Migrations
 {
     /// <inheritdoc />
@@ -16,7 +18,7 @@ namespace URLShortener.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -171,6 +173,15 @@ namespace URLShortener.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Description", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { "45deb9d6-c1ae-44a6-8b3b-3b3b3b3b3b3b", null, "The visitor role for the user.", "Visitor", "VISITOR" },
+                    { "639d303f-7876-4fff-96ec-37f8bd3bf180", null, "The admin role for the user.", "Admin", "ADMIN" }
                 });
 
             migrationBuilder.CreateIndex(

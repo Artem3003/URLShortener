@@ -12,7 +12,7 @@ using URLShortener.Data;
 namespace URLShortener.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20250404091835_Initial")]
+    [Migration("20250404142252_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -131,7 +131,7 @@ namespace URLShortener.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("URLShortener.Entities.Role", b =>
+            modelBuilder.Entity("URLShortener.Models.Role", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -141,6 +141,7 @@ namespace URLShortener.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
@@ -159,9 +160,25 @@ namespace URLShortener.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "639d303f-7876-4fff-96ec-37f8bd3bf180",
+                            Description = "The admin role for the user.",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "45deb9d6-c1ae-44a6-8b3b-3b3b3b3b3b3b",
+                            Description = "The visitor role for the user.",
+                            Name = "Visitor",
+                            NormalizedName = "VISITOR"
+                        });
                 });
 
-            modelBuilder.Entity("URLShortener.Entities.Url", b =>
+            modelBuilder.Entity("URLShortener.Models.Url", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -189,7 +206,7 @@ namespace URLShortener.Migrations
                     b.ToTable("Urls");
                 });
 
-            modelBuilder.Entity("URLShortener.Entities.User", b =>
+            modelBuilder.Entity("URLShortener.Models.User", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -256,7 +273,7 @@ namespace URLShortener.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
-                    b.HasOne("URLShortener.Entities.Role", null)
+                    b.HasOne("URLShortener.Models.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -265,7 +282,7 @@ namespace URLShortener.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("URLShortener.Entities.User", null)
+                    b.HasOne("URLShortener.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -274,7 +291,7 @@ namespace URLShortener.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("URLShortener.Entities.User", null)
+                    b.HasOne("URLShortener.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -283,13 +300,13 @@ namespace URLShortener.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
-                    b.HasOne("URLShortener.Entities.Role", null)
+                    b.HasOne("URLShortener.Models.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("URLShortener.Entities.User", null)
+                    b.HasOne("URLShortener.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -298,7 +315,7 @@ namespace URLShortener.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("URLShortener.Entities.User", null)
+                    b.HasOne("URLShortener.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

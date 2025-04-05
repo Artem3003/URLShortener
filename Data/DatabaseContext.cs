@@ -1,7 +1,7 @@
 
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using URLShortener.Entities;
+using URLShortener.Models;
 
 namespace URLShortener.Data;
 
@@ -16,5 +16,6 @@ public class DatabaseContext : IdentityDbContext<User, Role, string>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        modelBuilder.ApplyConfiguration(new RoleConfiguration());
     }
 }
