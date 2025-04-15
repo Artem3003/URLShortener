@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using URLShortener.Data;
 using URLShortener.Interfaces;
 using URLShortener.Models;
@@ -14,11 +15,13 @@ public class ShortenerController : Controller
 {
     private readonly IUrlShorteningService urlShorteningService;
     private readonly DatabaseContext context;
+    private readonly IDistributedCache distributedCache;
 
-    public ShortenerController(IUrlShorteningService urlShorteningService, DatabaseContext context)
+    public ShortenerController(IUrlShorteningService urlShorteningService, DatabaseContext context, IDistributedCache distributedCache)
     {
         this.urlShorteningService = urlShorteningService;
         this.context = context;
+        this.distributedCache = distributedCache;
     }
 
     [Route("Shortener")]
@@ -87,14 +90,30 @@ public class ShortenerController : Controller
     [HttpGet("{code}")]
     public async Task<IResult> RedirectToOriginalUrl(string code)
     {
-        var shortenedUrl = await context.ShortenedUrls.FirstOrDefaultAsync(u => u.ShortUrl == $"{Request.Scheme}://{Request.Host}/{code}");
+        string? cachedUrl = await distributedCache.GetStringAsync(code);
+        ShortenedUrl? shortenedUrl;
 
-        if (shortenedUrl == null)
+        if (string.IsNullOrEmpty(cachedUrl))
         {
-            return Results.NotFound();
+            shortenedUrl = await context.ShortenedUrls.FirstOrDefaultAsync(u => u.ShortUrl == $"{Request.Scheme}://{Request.Host}/{code}");
+
+
+            if (shortenedUrl == null)
+            {
+                return Results.NotFound();
+            }
+
+            await distributedCache.SetStringAsync(code, shortenedUrl.OriginalUrl, new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
+            });
+
+            return Results.Redirect(shortenedUrl.OriginalUrl);
         }
 
-        return Results.Redirect(shortenedUrl.OriginalUrl);
+        shortenedUrl = await context.ShortenedUrls.FirstOrDefaultAsync(u => u.OriginalUrl == cachedUrl);
+
+        return Results.Redirect(shortenedUrl!.OriginalUrl);
     }
 
     [Route("Shortener")]

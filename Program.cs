@@ -17,6 +17,11 @@ builder.Services.AddSingleton<AlgorithmDescriptionService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IUrlShorteningService, UrlShorteningService>();
 
+builder.Services.AddStackExchangeRedisCache(redisOptions =>
+{
+    redisOptions.Configuration = builder.Configuration.GetConnectionString("RedisConnection");
+});
+
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddIdentity<User, Role>(options =>
