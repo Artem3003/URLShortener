@@ -38,7 +38,7 @@
                         <td>@url.CreatedDate.ToString("g")</td>
                         <td>@url.CreatedBy</td>
                         <td>
-                            <button class="btn btn-sm btn-danger delete-btn" data-id="@url.Id">
+                            <button class="btn btn-sm btn-danger delete-btn" data-id="@url.Id" data-url="@Url.Action("Delete", "Shortener", new { id = url.Id })">
                                 <i class="bi bi-trash"></i> Delete
                             </button>
                         </td>
@@ -47,24 +47,54 @@
             </tbody>
         </table>
     </div>
+    @if (ViewBag.TotalPages > 1)
+    {
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center mt-4">
+                <li class="page-item @(ViewBag.CurrentPage == 1 ? "disabled" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage - 1)">
+                        <i class="bi bi-chevron-left"></i> Previous
+                    </a>
+                </li>
+
+                @for (int i = 1; i <= (int)ViewBag.TotalPages; i++)
+                {
+                    <li class="page-item @(i == (int)ViewBag.CurrentPage ? "active" : "")">
+                        <a class="page-link" asp-action="Index" asp-route-page="@i">@i</a>
+                    </li>
+                }
+
+                <li class="page-item @(ViewBag.CurrentPage == ViewBag.TotalPages ? "disabled" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage + 1)">
+                        Next <i class="bi bi-chevron-right"></i>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    }
 </div>
 
 @section Scripts {
     <script>
-        $(document).ready(function() {
-            $('.delete-btn').click(function() {
-                const urlId = $(this).data('id');
+        document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', async function () {
+                const id = this.dataset.id;
+                const url = this.dataset.url;
+
                 if (confirm('Are you sure you want to delete this URL?')) {
-                    $.ajax({
-                        url: '/Shortener/Delete/' + urlId,
-                        type: 'DELETE',
-                        success: function() {
-                            location.reload();
-                        },
-                        error: function(xhr) {
-                            alert('Error: ' + xhr.responseText);
+                    const response = await fetch(url, {
+                        method: 'DELETE',
+                        headers: {
+                            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value ?? '',
                         }
                     });
+
+                    if (response.ok) {
+                        // Remove row from table
+                        this.closest('tr').remove();
+                    } else {
+                        alert('Failed to delete. You might not have permission.');
+                    }
                 }
             });
         });
